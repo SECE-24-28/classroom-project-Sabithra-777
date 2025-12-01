@@ -1,0 +1,11 @@
+.heading__style {
+  color: green;
+  background-color: aqua;
+}
+.rectangle {
+  width: 100px;
+  height: 50px;
+  background-color: red;
+  margin-left: 50px;
+  padding-right: 100px;
+}
