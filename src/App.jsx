@@ -1,9 +1,10 @@
-import "./App.css";
-import HelloWorldComponent from "./hello-world/hello-world-component";
+import HeroCapsule from "./components/HeroCapsule";
 
 function App() {
   return (
-    <HelloWorldComponent/>
+    <div>
+      <HeroCapsule />
+    </div>
   );
 }
 
