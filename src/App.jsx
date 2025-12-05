@@ -27,7 +27,7 @@ function App() {
       {/* <LeadersTomorrowComponent /> */}
       {/* <SymbolOfExcellenceComponent /> */}
       {/* <PostionComponent /> */}
-      <TrustedbyComponent /> 
+      {/* <TrustedbyComponent /> */}
       {/* <OurPromise /> */}
 
       {/*  
@@ -35,7 +35,7 @@ function App() {
              VISIBLE SECTION RIGHT NOW
         ======================================
       */}
-      {/*<ImpactAtGlance />*/}
+      <ImpactAtGlance />
 
     </div>
   );
