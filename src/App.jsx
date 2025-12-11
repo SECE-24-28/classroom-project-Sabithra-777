@@ -24,8 +24,7 @@ import FetchApiComponent from "./fetch-api/fetch-api-component";
 import UseEffectComponent from "./use-effect-practice/use-effect-practice";
 import UseEffectPracticeTwo from "./use-effect-practice/use-effect-practice-2";
 import UseEffectPracticeThree from "./use-effect-practice/use-effect-practice-3";
-
-// ⭐ NEW COMPONENT
+import SignupFormComponent from "./signup-form-api/signup-form-component";
 import RegistrationForm from "./registration-form/registration-form-component";
 
 function App() {
@@ -55,9 +54,31 @@ function App() {
 
   return (
     <div>
-      <Routes>
-        {/* ⭐ ONLY THIS ONE RUNS */}
-        <Route path="/" element={<UseEffectPracticeThree />} />
+     <Routes>
+        ⭐ ONLY THIS ONE RUNS 
+        <Route path="/signup-form" element={<SignupFormComponent />} />
+       
+        ==========================
+         OTHER ROUTES (Commented)
+        ========================== 
+
+         {/*
+        <Route path="/" element={<RegistrationForm />} /> 
+        <Route path="/" element={<FetchApiComponent />} />
+        <Route path="/api-fetch" element={<FetchApiComponent />} />
+        <Route path="/eshwar" element={<HelloWorldComponent />} />
+        <Route path="/our-promise" element={<OurPromisesComponent />} />
+        <Route path="/trusted" element={<TrustedbyComponent />} />
+
+        <Route path="/leetcode/:id" element={<SymbolOfExcellenceComponent />} />
+        <Route path="*" element={<FourOFourComponent />} />
+        <Route path="/use-state-practice" element={<UseStateComponent />} />
+        <Route path="/use-state-form" element={<UsestateformComponent />} />
+        <Route
+          path="/addition-operation"
+          element={<AdditionOperationComponent />}
+        />
+              <Route path="/" element={<UseEffectPracticeThree />} />
         <Route path="/use-effect-practice" element={<UseEffectComponent />} />
         <Route
           path="/use-effect-practice-2"
@@ -68,28 +89,7 @@ function App() {
           element={<UseEffectPracticeThree />}
         />
 
-       
-        {/* ==========================
-             OTHER ROUTES (Commented)
-           ========================== */}
-
-        {/*
-        <Route path="/" element={<RegistrationForm />} /> 
-        <Route path="/" element={<FetchApiComponent />} />
-        <Route path="/api-fetch" element={<FetchApiComponent />} />
-        <Route path="/eshwar" element={<HelloWorldComponent />} />
-        <Route path="/our-promise" element={<OurPromisesComponent />} />
-        <Route path="/" element={<TrustedbyComponent />} />
-
-        <Route path="/leetcode/:id" element={<SymbolOfExcellenceComponent />} />
-        <Route path="*" element={<FourOFourComponent />} />
-        <Route path="/use-state-practice" element={<UseStateComponent />} />
-        <Route path="/use-state-form" element={<UsestateformComponent />} />
-        <Route
-          path="/addition-operation"
-          element={<AdditionOperationComponent />}
-        />
-        */}
+      */}
       </Routes>
 
       {/*  
@@ -100,8 +100,8 @@ function App() {
         Uncomment any section below when you want to view it.
       */}
 
-      {/*
-      <HelloWorldComponent />
+    
+      {/* <HelloWorldComponent />
       <FlexBoxComponent />
       <LeadersTomorrowComponent />
       <SymbolOfExcellenceComponent />
@@ -111,11 +111,14 @@ function App() {
       <OurPromise />
       <FlexWrapComponent />
       <OurPromisesComponent />
+      <UsestateformComponent/>
+      <RegistrationForm/>
+      <AdditionOperationComponent/>
       <ImpactAtGlance />
       <PropsPractice name="Sai" mobile="14234423243" />
       <PropsPractice name="Ragu" mobile="232332231231" />
-      <PropsPracticeTwo data={arr1} />
-      */}
+      <PropsPracticeTwo data={arr1} /> */}
+
     </div>
   );
 }
