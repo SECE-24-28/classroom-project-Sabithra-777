@@ -16,6 +16,14 @@ const User = new mongoose.Schema({
     type: String,
     require: true,
   },
+  collegeName: {
+    type: String,
+    require: true,
+  },
+  active: {
+    type: String,
+    require: true,
+  },
   password: {
     type: String,
     require: true,
