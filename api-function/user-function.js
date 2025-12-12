@@ -1,10 +1,29 @@
 exports.createUser = async (req, res) => {
   try {
-    const { firstName, email } = req.body;
-    const creatUser = await User.insertOne({
-      firstName: firstName,
-      email: email,
+    const {
+      firstName,
+      secondName,
+      email,
+      mobileNumber,
+      collegeName,
+      active,
+      password,
+    } = req.body;
+
+    const userDetails = await User.create({
+      firstName,
+      secondName,
+      email,
+      mobileNumber,
+      collegeName,
+      active: false,
+      password,
     });
+
+    await Admin.findOneAndUpdate(
+      { collegeName: collegeName },
+      { $push: { listOfRequest: userDetails._id } }
+    );
     return res.status(200).json({
       success: true,
       message: "User is created successfully",
