@@ -2,9 +2,9 @@ const admin = require("../models/admin");
 
 exports.getAllRequests = async (req, res) => {
   try {
-    console.log("Get all requests:");
-
-    const { id } = req.params;
+    // const { id } = req.params;
+    const { id } = req.query;
+    console.log("Get all requests:", id);
     const getDetails = await admin.findById(id).populate("listOfRequest");
     return res.status(200).json({
       success: true,
