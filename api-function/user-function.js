@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Admin = require("../models/admin");
+const AssignmentCreated = require("../models/assignment-created");
 const mongoose = require("mongoose");
 exports.createUser = async (req, res) => {
   try {
@@ -113,3 +114,44 @@ exports.getUserDetails = async (req, res) => {
   }
 };
 
+
+exports.fetchAssignments = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const getAssignments = await User.findById(userId).populate(
+      "setOfAssignmentsAssigned"
+    );
+    return res.status(200).json({
+      success: true,
+      assignmentList: getAssignments.setOfAssignmentsAssigned,
+    });
+  } catch (e) {
+    res.status(404).json({
+      success: false,
+      error: e,
+    });
+  }
+};
+
+exports.completeAssignment = async (req, res) => {
+  try {
+    const { userId, assignmentId } = req.body;
+    await User.findByIdAndUpdate(
+      userId,
+      { 
+        $pull: { setOfAssignmentsAssigned: assignmentId },
+        $push: { setOfAssignmentsCompleted: assignmentId } 
+      },  
+      { new: true }
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Assignment marked as completed",
+    });
+  } catch (e) {
+    res.status(404).json({
+      success: false,
+      error: e,
+    });
+  }
+};
