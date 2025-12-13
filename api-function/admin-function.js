@@ -1,6 +1,7 @@
 const admin = require("../models/admin");
 const user = require("../models/user");
 const AssignmentCreated = require("../models/assignment-created");
+const AssignmentCompleted = require("../models/assignment-completed");
 //worked
 exports.getAllRequests = async (req, res) => {
   try {
@@ -104,6 +105,37 @@ exports.deactivateUser = async (req, res) => {
     return res.status(404).json({
       success: false,
       error: e,
+    });
+  }
+};
+exports.fetchResult = async (req, res) => {
+  try {
+    const { assignmentId } = req.body;
+
+    const result = await AssignmentCreated.findById(assignmentId)
+      .populate({
+        path: "assignmentCompleted",
+        populate: {
+          path: "user",
+          select: "firstName secondName email mobileNumber",
+        },
+      });
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Assignment not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (e) {
+    return res.status(500).json({
+      success: false,
+      error: e.message,
     });
   }
 };

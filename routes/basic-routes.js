@@ -21,7 +21,7 @@ const router = express.Router();
 router.post("/userSignup", createUser);
 router.post("/adminSignup", adminSignup);
 router.get("/getUserDetails/:id", getUserDetails);
-router.post("/allAssignments", fetchAssignments);
 router.post("/completeAssignment", completeAssignment);
 router.post("/submitTest", submitTest);
+router.post("/allAssignments", fetchAssignments);
 module.exports = router;

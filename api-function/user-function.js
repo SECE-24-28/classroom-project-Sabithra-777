@@ -163,46 +163,39 @@ exports.completeAssignment = async (req, res) => {
 exports.submitTest = async (req, res) => {
   try {
     const { userId, assignmentId } = req.body;
-
-    const assignmentDetails = await assignmentCreated.findById(assignmentId);
+    const assignmentDetails = await AssignmentCreated.findById(assignmentId);
     if (!assignmentDetails) {
       return res.status(404).json({
         success: false,
         message: "Assignment not found",
       });
     }
-
     if (new Date() > new Date(assignmentDetails.deadline)) {
       return res.status(400).json({
         success: false,
         message: "Deadline crossed. Submission not allowed",
       });
     }
-
     const alreadySubmitted = await assignmentCompleted.findOne({
       user: userId,
       assignment: assignmentId,
     });
-
     if (alreadySubmitted) {
       return res.status(400).json({
         success: false,
         message: "You have already submitted this test",
       });
     }
-
     const completeAssignment = await assignmentCompleted.create({
       user: userId,
       assignment: assignmentId,
       submittedAt: new Date(),
     });
-
     await assignmentCreated.findByIdAndUpdate(
       assignmentId,
       { $push: { assignmentCompleted: completeAssignment._id } },
       { new: true }
     );
-
     return res.status(200).json({
       success: true,
       message: "Test submitted successfully",
@@ -214,3 +207,4 @@ exports.submitTest = async (req, res) => {
     });
   }
 };
+  
