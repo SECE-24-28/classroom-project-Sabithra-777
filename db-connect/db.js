@@ -1,25 +1,12 @@
 const mongoose = require("mongoose");
-exports.connect = async () => {
+
+const connect = async () => {
   try {
     await mongoose.connect("mongodb://127.0.0.1:27017/LMS_BACKEND");
     console.log("Db is connected");
   } catch (e) {
-    console.log("Error in connecting to the db");
+    console.log("Error in connecting to the db", e);
   }
 };
 
-//get
-
-//post
-
-//put
-
-//delete
-
-
-//
-
-const getAssignments=await User.findbyid(id,{})
-//id1
-//id2
-//id3
+module.exports = { connect };
