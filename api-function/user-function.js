@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const Admin = require("../models/admin");
 const AssignmentCreated = require("../models/assignment-created");
+const AssignmentCompleted = require("../models/assignment-completed");  
 const mongoose = require("mongoose");
 exports.createUser = async (req, res) => {
   try {
@@ -136,11 +137,16 @@ exports.fetchAssignments = async (req, res) => {
 exports.completeAssignment = async (req, res) => {
   try {
     const { userId, assignmentId } = req.body;
+   await AssignmentCompleted.create({
+      user: userId,
+      assignment: assignmentId,
+      completedTime: new Date(),
+    });
+
     await User.findByIdAndUpdate(
       userId,
       { 
         $pull: { setOfAssignmentsAssigned: assignmentId },
-        $push: { setOfAssignmentsCompleted: assignmentId } 
       },  
       { new: true }
     );
