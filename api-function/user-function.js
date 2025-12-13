@@ -93,6 +93,23 @@ exports.adminSignup = async (req, res) => {
     });
   }
 };
+exports.fetchAssignments = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const getAssignments = await User.findById(userId).populate(
+      "setOfAssignmentsAssigned"
+    );
+    return res.status(200).json({
+      success: true,
+      assignmentList: getAssignments.setOfAssignmentsAssigned,
+    });
+  } catch (e) {
+    res.status(404).json({
+      success: false,
+      error: e,
+    });
+  }
+};
 // exports.fetchUserDetails=async(req,res)=>{
 //   try{
 

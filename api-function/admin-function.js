@@ -46,12 +46,26 @@ exports.acceptOrDecline = async (req, res) => {
 exports.createAssignments = async (req, res) => {
   try {
     const { assignmentName, deadLine, adminId } = req.body;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // convert incoming deadline
+    const deadlineDate = new Date(deadLine);
+    deadlineDate.setHours(0, 0, 0, 0);
+
+    // ❌ block past dates
+    if (deadlineDate < today) {
+      return res.status(400).json({
+        success: false,
+        message: "Deadline cannot be a past date",
+      });
+    }
     const createAssignment = await Assignment.create({
       assignmentName: assignmentName,
-      deadline: deadLine,
+      deadline: new Date(deadLine),
     });
     const pushAssignment = await admin.findByIdAndUpdate(
-      id,
+      adminId,
       {
         $push: { listOfAssignments: createAssignment._id },
       },
