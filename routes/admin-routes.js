@@ -6,4 +6,5 @@ const {
 const router = express.Router();
 router.get("/getRequests", getAllRequests);
 router.post("/acceptorDelete", acceptOrDecline);
+router.post("/createAssignments");
 module.exports = router;

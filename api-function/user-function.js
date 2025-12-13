@@ -93,3 +93,8 @@ exports.adminSignup = async (req, res) => {
     });
   }
 };
+// exports.fetchUserDetails=async(req,res)=>{
+//   try{
+
+//   }
+// }
