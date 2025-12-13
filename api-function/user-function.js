@@ -1,8 +1,7 @@
-const User = require("../models/user");
 const Admin = require("../models/admin");
-const AssignmentCreated = require("../models/assignment-created");
-const AssignmentCompleted = require("../models/assignment-completed");  
-const mongoose = require("mongoose");
+const User = require("../models/user");
+const assignmentCompleted = require("../models/assignment-completed");
+const assignmentCreated = require("../models/assignment-created");
 exports.createUser = async (req, res) => {
   try {
     const {
@@ -14,7 +13,7 @@ exports.createUser = async (req, res) => {
       active,
       password,
     } = req.body;
-     const [checkDetails, checkAdminDetails] = await Promise.all([
+    const [checkDetails, checkAdminDetails] = await Promise.all([
       User.findOne({ mobileNumber, email }),
       Admin.findOne({ mobileNumber, email }),
     ]);
@@ -95,14 +94,14 @@ exports.adminSignup = async (req, res) => {
     });
   }
 };
- 
+
 exports.getUserDetails = async (req, res) => {
   try {
-    const { id } = req.params;  
-      // console.log("hi");
-      console.log("Requested ID:", id);
+    const { id } = req.params;
+    // console.log("hi");
+    console.log("Requested ID:", id);
     const getDetails = await User.findById(id);
-   
+
     return res.status(200).json({
       success: true,
       data: getDetails,
@@ -114,7 +113,6 @@ exports.getUserDetails = async (req, res) => {
     });
   }
 };
-
 
 exports.fetchAssignments = async (req, res) => {
   try {
@@ -137,7 +135,7 @@ exports.fetchAssignments = async (req, res) => {
 exports.completeAssignment = async (req, res) => {
   try {
     const { userId, assignmentId } = req.body;
-   await AssignmentCompleted.create({
+    await AssignmentCompleted.create({
       user: userId,
       assignment: assignmentId,
       completedTime: new Date(),
@@ -145,9 +143,9 @@ exports.completeAssignment = async (req, res) => {
 
     await User.findByIdAndUpdate(
       userId,
-      { 
+      {
         $pull: { setOfAssignmentsAssigned: assignmentId },
-      },  
+      },
       { new: true }
     );
     return res.status(200).json({
@@ -158,6 +156,61 @@ exports.completeAssignment = async (req, res) => {
     res.status(404).json({
       success: false,
       error: e,
+    });
+  }
+};
+
+exports.submitTest = async (req, res) => {
+  try {
+    const { userId, assignmentId } = req.body;
+
+    const assignmentDetails = await assignmentCreated.findById(assignmentId);
+    if (!assignmentDetails) {
+      return res.status(404).json({
+        success: false,
+        message: "Assignment not found",
+      });
+    }
+
+    if (new Date() > new Date(assignmentDetails.deadline)) {
+      return res.status(400).json({
+        success: false,
+        message: "Deadline crossed. Submission not allowed",
+      });
+    }
+
+    const alreadySubmitted = await assignmentCompleted.findOne({
+      user: userId,
+      assignment: assignmentId,
+    });
+
+    if (alreadySubmitted) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already submitted this test",
+      });
+    }
+
+    const completeAssignment = await assignmentCompleted.create({
+      user: userId,
+      assignment: assignmentId,
+      submittedAt: new Date(),
+    });
+
+    await assignmentCreated.findByIdAndUpdate(
+      assignmentId,
+      { $push: { assignmentCompleted: completeAssignment._id } },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Test submitted successfully",
+    });
+  } catch (e) {
+    return res.status(500).json({
+      success: false,
+      error: e.message,
     });
   }
 };
