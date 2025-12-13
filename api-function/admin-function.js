@@ -3,6 +3,7 @@ const user = require("../models/user");
 const Assignment = require("../models/assignment-created");
 const AssignmentCompleted = require("../models/assignment-completed");
 const assignmentCreated = require("../models/assignment-created");
+const assignmentCompleted = require("../models/assignment-completed");
 exports.getAllRequests = async (req, res) => {
   try {
     // const { id } = req.params;
@@ -111,4 +112,24 @@ exports.deactivateUser = async (req, res) => {
     });
   }
 };
+exports.getAssignmentResults = async (req, res) => {
+  try {
+    const { assignmentId } = req.query;
+    const getUserDetails = await assignmentCompleted
+      .find({
+        assignment: assignmentId,
+      })
+      .populate("user");
+    console.log("The details:", getUserDetails);
 
+    return res.status(200).json({
+      success: true,
+      userDetails: getUserDetails,
+    });
+  } catch (e) {
+    return res.status(404).json({
+      success: false,
+      error: e,
+    });
+  }
+};
