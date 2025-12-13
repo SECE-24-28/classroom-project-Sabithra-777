@@ -1,3 +1,5 @@
+const Admin = require("../models/admin");
+const User = require("../models/user");
 exports.createUser = async (req, res) => {
   try {
     const {
@@ -9,7 +11,17 @@ exports.createUser = async (req, res) => {
       active,
       password,
     } = req.body;
-
+    // console.log("Hello I am COMING OVER HERE");
+    const [checkDetails, checkUserDetails] = await Promise.all([
+      Admin.findOne({ mobileNumber, email }),
+      User.findOne({ mobileNumber, email }),
+    ]);
+    if (checkDetails || checkUserDetails) {
+      return res.status(400).json({
+        success: false,
+        message: "email/mobile number already exists",
+      });
+    }
     const userDetails = await User.create({
       firstName,
       secondName,
