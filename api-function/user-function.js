@@ -2,6 +2,7 @@ const Admin = require("../models/admin");
 const User = require("../models/user");
 const assignmentCompleted = require("../models/assignment-completed");
 const assignmentCreated = require("../models/assignment-created");
+const bcrypt = require("bcrypt");
 exports.createUser = async (req, res) => {
   try {
     const {
@@ -14,6 +15,7 @@ exports.createUser = async (req, res) => {
       password,
     } = req.body;
     // console.log("Hello I am COMING OVER HERE");
+    const bcryptedPassword = await bcrypt.hash(password, 10);
     const [checkDetails, checkUserDetails] = await Promise.all([
       Admin.findOne({ mobileNumber, email }),
       User.findOne({ mobileNumber, email }),
@@ -31,7 +33,7 @@ exports.createUser = async (req, res) => {
       mobileNumber,
       collegeName,
       active: false,
-      password,
+      password: bcryptedPassword,
     });
 
     await Admin.findOneAndUpdate(
@@ -112,11 +114,6 @@ exports.fetchAssignments = async (req, res) => {
     });
   }
 };
-// exports.fetchUserDetails=async(req,res)=>{
-//   try{
-
-//   }
-// }
 
 exports.submitTest = async (req, res) => {
   try {
@@ -152,6 +149,36 @@ exports.submitTest = async (req, res) => {
     });
   } catch (e) {
     return res.status(404).json({
+      success: false,
+      error: e,
+    });
+  }
+};
+exports.userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const checkUser = await User.findOne(email);
+    if (!checkUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Account is not registered",
+      });
+    }
+    if (checkUser.active === false) {
+      return res.status(400).json({
+        success: false,
+        message: "Account is deactivated",
+      });
+    }
+    const isMatch = await bcrypt.compare(password, checkUser.password);
+    if (isMatch === false) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is not correct",
+      });
+    }
+  } catch (e) {
+    res.status(404).json({
       success: false,
       error: e,
     });

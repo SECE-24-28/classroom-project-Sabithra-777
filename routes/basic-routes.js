@@ -4,6 +4,7 @@ const {
   adminSignup,
   fetchAssignments,
   submitTest,
+  userLogin,
 } = require("../api-function/user-function");
 // const {
 //   createUser,
@@ -20,5 +21,6 @@ router.post("/userSignup", createUser);
 router.post("/adminSignup", adminSignup);
 router.get("/allAssignments", fetchAssignments);
 router.put("/submitTest", submitTest);
+router.post("/userLogin", userLogin);
 // router.get("/fetchProfile")
 module.exports = router;

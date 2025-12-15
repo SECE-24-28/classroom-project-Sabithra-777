@@ -3,7 +3,9 @@ const cors = require("cors");
 const database = require("./db-connect/db");
 const BasicRoutes = require("./routes/basic-routes");
 const AdminRoutes = require("./routes/admin-routes");
-let port = 21000;
+const dotenv = require("dotenv");
+dotenv.config();
+// let port = 21000;
 const app = express();
 database.connect();
 app.use(
@@ -23,7 +25,8 @@ app.get("/", (req, res) => {
     message: "Port is running",
   });
 });
+console.log("The port:", process.env.Port);
 
-app.listen(21000, "0.0.0.0", () => {
+app.listen(process.env.Port, "0.0.0.0", () => {
   console.log("Server running on port 21000");
 });
