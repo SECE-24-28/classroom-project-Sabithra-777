@@ -188,12 +188,15 @@ exports.userLogin = async (req, res) => {
       process.env.JWT,
       { expiresIn: "24h" }
     );
-    checkUser.password = undefined;
+    const userObj = checkUser.toObject();
+    userObj.password = undefined;
+    userObj.accountType = "User";
+
     return res.status(200).json({
       success: true,
       message: "Logged in successfully",
       token,
-      userDetails: checkUser,
+      userDetails: userObj,
     });
   } catch (e) {
     console.log("The error:", e);
