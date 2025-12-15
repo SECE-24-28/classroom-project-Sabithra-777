@@ -2,7 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const database = require("./db-connect/db");
 const BasicRoutes = require("./routes/basic-routes");
-let port = 21000;
+const AdminRoutes = require("./routes/admin-routes");
+const dotenv = require("dotenv");
+dotenv.config();
+// let port = 21000;
 const app = express();
 database.connect();
 app.use(
@@ -15,13 +18,15 @@ app.use(
 
 app.use(express.json());
 app.use("/api/v1/User", BasicRoutes);
+app.use("/api/v1/Admin", AdminRoutes);
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
     message: "Port is running",
   });
 });
+console.log("The port:", process.env.Port);
 
-app.listen(port, () => {
-  console.log(`App is running on the port ${port}`);
+app.listen(process.env.Port, "0.0.0.0", () => {
+  console.log("Server running on port 21000");
 });

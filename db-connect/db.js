@@ -1,19 +1,11 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
+
 exports.connect = async () => {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/LMS_BACKEND");
+    await mongoose.connect(process.env.MONGO_URL);
     console.log("Db is connected");
   } catch (e) {
-    console.log("Error in connecting to the db");
+    console.error("Error in connecting to the db", e.message);
   }
 };
-
-//get
-
-//post
-
-//put
-
-//delete
-
-//

@@ -30,5 +30,11 @@ const Admin = new mongoose.Schema({
       ref: "User",
     },
   ],
+  listOfAssignments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AssignmentCreated",
+    },
+  ],
 });
 module.exports = mongoose.model("Admin", Admin);
