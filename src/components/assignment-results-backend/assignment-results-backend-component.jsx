@@ -6,7 +6,7 @@ export default function AssignmentResults() {
   const [userDetails, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const token = JSON.parse(localStorage.getItem("token"));
   const fetchAssignmentResults = async (id) => {
     if (!id.trim()) {
       setError("Please enter an assignment ID");
@@ -20,7 +20,9 @@ export default function AssignmentResults() {
       const { data } = await axios.get("/api/assignment/results", {
         params: { assignmentId: id },
         headers: {
-          "Content-Type": "application/json",
+          // "Content-Type": "application/json",
+
+          Authorization: `Bearer ${token}`,
         },
       });
 

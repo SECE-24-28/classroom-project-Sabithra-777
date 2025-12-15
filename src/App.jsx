@@ -6,19 +6,23 @@ import UserAssignmentDashboard from "./components/user-assignment-page/user-assi
 import UserLoginPage from "./components/user-login-page/user-login-page";
 function App() {
   const user = JSON.parse(localStorage.getItem("userDetails"));
+  console.log("The USER LOCAL:", user);
+
   return (
     <Routes>
-      {user && (
+      {user && user.accountType === "Admin" && (
         <Route path="/create-assignment" element={<CreateAssignmentPage />} />
       )}
-      {user && <Route path="/user-request" element={<UserRequestsPage />} />}
+      {user && user.accountType === "Admin" && (
+        <Route path="/user-request" element={<UserRequestsPage />} />
+      )}
       {user && (
         <Route
           path="/assignment-results-backend"
           element={<AssignmentResults />}
         />
       )}
-      {user && (
+      {user && user.accountType === "User" && (
         <Route
           path="/user-assignment-backend"
           element={<UserAssignmentDashboard />}
