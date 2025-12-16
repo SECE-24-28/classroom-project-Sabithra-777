@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 exports.connect = async () => {
   try {
     await mongoose.connect(
@@ -7,15 +8,6 @@ exports.connect = async () => {
     console.log("LMS Db is connected");
   } catch (e) {
     console.log("Error in connecting to the db");
+    console.error(e.message);
   }
 };
-
-//get
-
-//post
-
-//put
-
-//delete
-
-//
