@@ -4,13 +4,9 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true, // 👈 important
+    host: true, // or '0.0.0.0'
     port: 5173,
     strictPort: true,
-    hmr: {
-      protocol: "ws",
-      host: "51.20.66.94", // 👈 public IP
-      port: 5173,
-    },
+    // Remove the hmr block entirely - let Vite auto-detect
   },
 });
