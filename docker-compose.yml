@@ -1,0 +1,13 @@
+services:
+  resume-backend:
+    build: .
+    container_name: resume-backend
+    restart: always
+    ports:
+      - "8080:21000" # External:Internal port mapping
+
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1024M
