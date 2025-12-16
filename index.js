@@ -5,7 +5,7 @@ const BasicRoutes = require("./routes/basic-routes");
 const AdminRoutes = require("./routes/admin-routes");
 let port = 21000;
 const app = express();
-database.connect();
+database.connect();//
 app.use(
   cors({
     origin: "*",
