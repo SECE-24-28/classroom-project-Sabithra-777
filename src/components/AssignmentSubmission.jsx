@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Upload, FileText, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
+=======
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Upload, FileText, Calendar, Clock } from "lucide-react";
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
 
 const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
   const { user } = useAuth();
@@ -10,21 +16,30 @@ const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') {
+    if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
+<<<<<<< HEAD
       toast.warning('Please select a PDF file');
+=======
+      alert("Please select a PDF file");
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
     }
   };
 
   const submitAssignment = async () => {
     if (!selectedFile) {
+<<<<<<< HEAD
       toast.warning('Please select a PDF file to submit');
+=======
+      alert("Please select a PDF file to submit");
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       return;
     }
 
     setSubmitting(true);
     try {
+<<<<<<< HEAD
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:21000/api/v1/User/submitTest', {
         method: 'POST',
@@ -48,6 +63,30 @@ const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
       }
     } catch (error) {
       toast.error('Submission failed');
+=======
+      const response = await fetch(
+        "http://51.20.66.94:8080/api/v1/User/submitTest",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user.id,
+            assignmentId,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        alert("Assignment submitted successfully!");
+        setSelectedFile(null);
+        onSubmit();
+      } else {
+        alert(data.message || "Submission failed");
+      }
+    } catch (error) {
+      alert("Submission failed");
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
     } finally {
       setSubmitting(false);
     }
@@ -55,33 +94,33 @@ const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
 
   const styles = {
     fileUpload: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1rem',
-      marginTop: '1rem',
+      display: "flex",
+      alignItems: "center",
+      gap: "1rem",
+      marginTop: "1rem",
     },
     fileInput: {
-      display: 'none',
+      display: "none",
     },
     fileButton: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      padding: '0.75rem 1rem',
-      background: '#f7fafc',
-      border: '2px dashed #cbd5e0',
-      borderRadius: '8px',
-      cursor: 'pointer',
-      transition: 'all 0.3s',
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+      padding: "0.75rem 1rem",
+      background: "#f7fafc",
+      border: "2px dashed #cbd5e0",
+      borderRadius: "8px",
+      cursor: "pointer",
+      transition: "all 0.3s",
     },
     submitButton: {
-      padding: '0.75rem 1.5rem',
-      background: '#667eea',
-      color: 'white',
-      border: 'none',
-      borderRadius: '8px',
-      cursor: 'pointer',
-      fontWeight: '600',
+      padding: "0.75rem 1.5rem",
+      background: "#667eea",
+      color: "white",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      fontWeight: "600",
     },
   };
 
@@ -89,7 +128,7 @@ const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
     <div style={styles.fileUpload}>
       <label style={styles.fileButton}>
         <Upload size={20} />
-        {selectedFile ? selectedFile.name : 'Choose PDF file'}
+        {selectedFile ? selectedFile.name : "Choose PDF file"}
         <input
           type="file"
           accept=".pdf"
@@ -97,17 +136,17 @@ const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
           style={styles.fileInput}
         />
       </label>
-      
+
       <button
         onClick={submitAssignment}
         disabled={!selectedFile || submitting}
         style={{
           ...styles.submitButton,
-          opacity: (!selectedFile || submitting) ? 0.5 : 1,
-          cursor: (!selectedFile || submitting) ? 'not-allowed' : 'pointer',
+          opacity: !selectedFile || submitting ? 0.5 : 1,
+          cursor: !selectedFile || submitting ? "not-allowed" : "pointer",
         }}
       >
-        {submitting ? 'Submitting...' : 'Submit Assignment'}
+        {submitting ? "Submitting..." : "Submit Assignment"}
       </button>
     </div>
   );
@@ -158,6 +197,7 @@ const AssignmentSubmission = () => {
 
   const fetchAssignments = async () => {
     try {
+<<<<<<< HEAD
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:21000/api/v1/User/allAssignments', {
         method: 'POST',
@@ -167,12 +207,22 @@ const AssignmentSubmission = () => {
         },
         body: JSON.stringify({ userId: user.id })
       });
+=======
+      const response = await fetch(
+        "http://51.20.66.94:8080/api/v1/User/allAssignments",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id }),
+        }
+      );
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       const data = await response.json();
       if (data.success) {
         setAssignments(data.assignmentList || []);
       }
     } catch (error) {
-      console.error('Error fetching assignments:', error);
+      console.error("Error fetching assignments:", error);
     } finally {
       setLoading(false);
     }
@@ -204,56 +254,63 @@ const AssignmentSubmission = () => {
 
   const styles = {
     container: {
-      padding: '2rem',
-      maxWidth: '1000px',
-      margin: '0 auto',
+      padding: "2rem",
+      maxWidth: "1000px",
+      margin: "0 auto",
     },
     title: {
-      fontSize: '2rem',
-      fontWeight: '700',
-      color: '#1a202c',
-      marginBottom: '2rem',
-      textAlign: 'center',
+      fontSize: "2rem",
+      fontWeight: "700",
+      color: "#1a202c",
+      marginBottom: "2rem",
+      textAlign: "center",
     },
     assignmentCard: {
-      background: 'white',
-      borderRadius: '12px',
-      padding: '1.5rem',
-      marginBottom: '1.5rem',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-      border: '1px solid #e2e8f0',
+      background: "white",
+      borderRadius: "12px",
+      padding: "1.5rem",
+      marginBottom: "1.5rem",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+      border: "1px solid #e2e8f0",
     },
     assignmentHeader: {
+<<<<<<< HEAD
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
       marginBottom: '1rem',
       gap: '1rem',
+=======
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: "1rem",
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
     },
     assignmentTitle: {
-      fontSize: '1.25rem',
-      fontWeight: '600',
-      color: '#1a202c',
+      fontSize: "1.25rem",
+      fontWeight: "600",
+      color: "#1a202c",
     },
     deadline: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      color: '#e53e3e',
-      fontSize: '0.875rem',
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+      color: "#e53e3e",
+      fontSize: "0.875rem",
     },
     submittedBadge: {
-      padding: '0.25rem 0.75rem',
-      background: '#d1fae5',
-      color: '#065f46',
-      borderRadius: '20px',
-      fontSize: '0.75rem',
-      fontWeight: '600',
+      padding: "0.25rem 0.75rem",
+      background: "#d1fae5",
+      color: "#065f46",
+      borderRadius: "20px",
+      fontSize: "0.75rem",
+      fontWeight: "600",
     },
     noAssignments: {
-      textAlign: 'center',
-      padding: '3rem',
-      color: '#718096',
+      textAlign: "center",
+      padding: "3rem",
+      color: "#718096",
     },
   };
 
@@ -264,13 +321,14 @@ const AssignmentSubmission = () => {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>My Assignments</h1>
-      
+
       {assignments.length === 0 ? (
         <div style={styles.noAssignments}>
           <FileText size={48} color="#cbd5e0" />
           <p>No assignments available</p>
         </div>
       ) : (
+<<<<<<< HEAD
         assignments.map((assignment) => {
           const isSubmitted = !!submissions[assignment._id];
           return (
@@ -284,6 +342,17 @@ const AssignmentSubmission = () => {
                   </div>
                 </div>
                 {!isSubmitted && <CountdownTimer deadline={assignment.deadline} />}
+=======
+        assignments.map((assignment) => (
+          <div key={assignment._id} style={styles.assignmentCard}>
+            <div style={styles.assignmentHeader}>
+              <h3 style={styles.assignmentTitle}>
+                {assignment.assignmentName}
+              </h3>
+              <div style={styles.deadline}>
+                <Calendar size={16} />
+                Due: {new Date(assignment.deadline).toLocaleDateString()}
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
               </div>
               
               {isSubmitted ? (
@@ -311,8 +380,22 @@ const AssignmentSubmission = () => {
                 />
               )}
             </div>
+<<<<<<< HEAD
           );
         })
+=======
+
+            {assignment.submitted ? (
+              <div style={styles.submittedBadge}>✓ Submitted</div>
+            ) : (
+              <AssignmentSubmissionForm
+                assignmentId={assignment._id}
+                onSubmit={() => fetchAssignments()}
+              />
+            )}
+          </div>
+        ))
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       )}
     </div>
   );

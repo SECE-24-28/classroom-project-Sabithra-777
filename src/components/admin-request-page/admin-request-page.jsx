@@ -12,7 +12,7 @@ import {
   Search,
   Filter,
 } from "lucide-react";
-import { adminAPI } from '../../config/api';
+import { adminAPI } from "../../config/api";
 
 const UserRequestsPage = () => {
   const [requests, setRequests] = useState([]);
@@ -21,7 +21,7 @@ const UserRequestsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCollege, setFilterCollege] = useState("all");
 
-  const admin = JSON.parse(localStorage.getItem('user') || '{}');
+  const admin = JSON.parse(localStorage.getItem("user") || "{}");
   const adminId = admin.id;
 
   useEffect(() => {
@@ -30,17 +30,32 @@ const UserRequestsPage = () => {
 
   const fetchRequests = async () => {
     if (!adminId) {
-      console.error('Admin not logged in');
+      console.error("Admin not logged in");
       return;
     }
-    
-    setLoading(true);
+
+    setLoading(true); //
     try {
+<<<<<<< HEAD
       const response = await fetch(`http://localhost:21000/api/v1/Admin/pendingUsers/${adminId}`);
       const data = await response.json();
 
       if (data.success) {
         setRequests(data.data || []);
+=======
+      const response = await fetch(
+        `http://51.20.66.94:8080/api/v1/Admin/getAllRequests/${adminId}`
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        // Combine registration requests and user requests
+        const allRequests = [
+          ...(data.data.registrationRequests || []),
+          ...(data.data.userRequests || []),
+        ];
+        setRequests(allRequests);
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       } else {
         console.error("Failed to fetch requests");
       }
@@ -58,6 +73,7 @@ const UserRequestsPage = () => {
     setActionLoading((prev) => ({ ...prev, [userId]: action }));
 
     try {
+<<<<<<< HEAD
       const response = await fetch('http://localhost:21000/api/v1/Admin/approveUser', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -68,6 +84,21 @@ const UserRequestsPage = () => {
         })
       });
       
+=======
+      const response = await fetch(
+        "http://51.20.66.94:8080/api/v1/Admin/acceptOrDecline",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            adminId,
+            userId,
+            select: action === "accept" ? 1 : 0,
+          }),
+        }
+      );
+
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       const data = await response.json();
 
       if (data.success) {
@@ -78,12 +109,15 @@ const UserRequestsPage = () => {
 
         setRequests((prev) => prev.filter((u) => u._id !== userId));
       } else {
-        showNotification(data.message || "Action failed. Please try again.", "error");
+        showNotification(
+          data.message || "Action failed. Please try again.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Action error:", error.response?.data || error.message);
       showNotification(
-        error.response?.data?.message || "Network error. Please try again.", 
+        error.response?.data?.message || "Network error. Please try again.",
         "error"
       );
     } finally {

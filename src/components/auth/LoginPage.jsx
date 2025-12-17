@@ -12,6 +12,11 @@ const LoginPage = () => {
     password: "",
     userType: "user", // "user" or "admin"
   });
+<<<<<<< HEAD
+=======
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestData, setRequestData] = useState({ email: "", message: "" });
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -48,18 +53,22 @@ const LoginPage = () => {
     setErrors({});
 
     try {
-      const endpoint = formData.userType === "admin" ? "/User/adminLogin" : "/User/userLogin";
+      const endpoint =
+        formData.userType === "admin" ? "/User/adminLogin" : "/User/userLogin";
 
       const payload = {
         email: formData.email,
         password: formData.password,
       };
 
-      const response = await fetch(`http://localhost:21000/api/v1${endpoint}`, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      const response = await fetch(
+        `http://51.20.66.94:8080/api/v1${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -74,6 +83,15 @@ const LoginPage = () => {
         setErrors({ submit: data.message || "Login failed" });
       }
     } catch (error) {
+<<<<<<< HEAD
+=======
+      const errorMsg =
+        error.message || "Login failed. Please check your credentials.";
+      if (errorMsg.includes("not activated")) {
+        setShowRequestForm(true);
+        setRequestData({ email: formData.email, message: "" });
+      }
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       setErrors({
         submit: "Login failed. Please check your credentials.",
       });
@@ -342,9 +360,71 @@ const LoginPage = () => {
             Sign up
           </Link>
         </div>
+<<<<<<< HEAD
+=======
+
+        {showRequestForm && (
+          <div style={styles.requestModal}>
+            <div style={styles.requestCard}>
+              <h3>Request Account Activation</h3>
+              <p>
+                Your account is pending admin approval. Send a request to
+                activate your account.
+              </p>
+              <textarea
+                value={requestData.message}
+                onChange={(e) =>
+                  setRequestData({ ...requestData, message: e.target.value })
+                }
+                placeholder="Please explain why you need access..."
+                style={styles.requestTextarea}
+              />
+              <div style={styles.requestButtons}>
+                <button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(
+                        "http://51.20.66.94:8080/api/v1/User/createRequest",
+                        {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            email: requestData.email,
+                            requestType: "Account Activation",
+                            message: requestData.message,
+                          }),
+                        }
+                      );
+                      if (response.ok) {
+                        alert("Request sent successfully!");
+                        setShowRequestForm(false);
+                      }
+                    } catch (error) {
+                      alert("Failed to send request");
+                    }
+                  }}
+                  style={styles.sendButton}
+                >
+                  Send Request
+                </button>
+                <button
+                  onClick={() => setShowRequestForm(false)}
+                  style={styles.cancelButton}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       </div>
     </div>
   );
 };
 
+<<<<<<< HEAD
 export default LoginPage;
+=======
+export default LoginPage;
+>>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
