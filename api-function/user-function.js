@@ -5,7 +5,7 @@ const assignmentCreated = require("../models/assignment-created");
 
 exports.createUser = async (req, res) => {
   try {
-    const { firstName, email, collegeName, password } = req.body;
+    const { firstName, email, password, collegeName } = req.body;
     
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -15,12 +15,20 @@ exports.createUser = async (req, res) => {
       });
     }
 
+    const adminExists = await Admin.findOne({ collegeName: collegeName });
+    if (!adminExists) {
+      return res.status(400).json({
+        success: false,
+        message: "No admin found for this college. Please contact support.",
+      });
+    }
+
     const userDetails = await User.create({
       firstName,
       email,
-      collegeName,
       password,
-      status: 'PENDING'
+      collegeName,
+      isApproved: false
     });
 
     await Admin.findOneAndUpdate(
@@ -42,7 +50,7 @@ exports.createUser = async (req, res) => {
 
 exports.adminSignup = async (req, res) => {
   try {
-    const { firstName, email, collegeName, password } = req.body;
+    const { firstName, email, password, collegeName } = req.body;
     
     const checkCollege = await Admin.findOne({ collegeName });
     if (checkCollege) {
@@ -63,8 +71,8 @@ exports.adminSignup = async (req, res) => {
     await Admin.create({
       firstName,
       email,
-      collegeName,
       password,
+      collegeName,
     });
 
     return res.status(200).json({
@@ -88,21 +96,21 @@ exports.userLogin = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "User not found"
+        message: "You don't have access"
       });
     }
     
     if (user.password !== password) {
       return res.status(400).json({
         success: false,
-        message: "Invalid credentials"
+        message: "Wrong password"
       });
     }
     
-    if (user.status !== 'APPROVED') {
+    if (!user.isApproved) {
       return res.status(403).json({
         success: false,
-        message: "Waiting for admin acceptance"
+        message: "Waiting for admin approval"
       });
     }
     
@@ -142,14 +150,14 @@ exports.adminLogin = async (req, res) => {
     if (!admin) {
       return res.status(400).json({
         success: false,
-        message: "Admin not found"
+        message: "You don't have access"
       });
     }
     
     if (admin.password !== password) {
       return res.status(400).json({
         success: false,
-        message: "Invalid credentials"
+        message: "Wrong password"
       });
     }
     
@@ -239,6 +247,25 @@ exports.submitTest = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Assignment submitted successfully",
+    });
+  } catch (e) {
+    return res.status(500).json({
+      success: false,
+      error: e.message,
+    });
+  }
+};
+
+exports.getUserSubmissions = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const submissions = await assignmentCompleted.find({ user: userId })
+      .populate('assignment', 'assignmentName deadline')
+      .sort({ submittedAt: -1 });
+    
+    return res.status(200).json({
+      success: true,
+      submissions: submissions
     });
   } catch (e) {
     return res.status(500).json({
