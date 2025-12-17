@@ -7,6 +7,13 @@ exports.createUser = async (req, res) => {
   try {
     const { firstName, email, password, collegeName } = req.body;
     
+    if (!firstName || !email || !password || !collegeName) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+    
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -41,9 +48,10 @@ exports.createUser = async (req, res) => {
       message: "Registration successful. Waiting for admin approval.",
     });
   } catch (e) {
+    console.error('User registration error:', e);
     res.status(500).json({
       success: false,
-      error: e.message,
+      message: e.message,
     });
   }
 };
@@ -51,6 +59,13 @@ exports.createUser = async (req, res) => {
 exports.adminSignup = async (req, res) => {
   try {
     const { firstName, email, password, collegeName } = req.body;
+    
+    if (!firstName || !email || !password || !collegeName) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
     
     const checkCollege = await Admin.findOne({ collegeName });
     if (checkCollege) {
@@ -80,9 +95,10 @@ exports.adminSignup = async (req, res) => {
       message: "Admin created successfully",
     });
   } catch (e) {
+    console.error('Admin registration error:', e);
     res.status(500).json({
       success: false,
-      error: e.message,
+      message: e.message,
     });
   }
 };
