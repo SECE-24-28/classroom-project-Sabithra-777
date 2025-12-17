@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserPlus, Mail, Phone, Building, Lock, User, AlertCircle, CheckCircle } from "lucide-react";
+import {
+  UserPlus,
+  Mail,
+  Phone,
+  Building,
+  Lock,
+  User,
+  AlertCircle,
+  CheckCircle,
+} from "lucide-react";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -58,7 +67,10 @@ const RegisterPage = () => {
     setSuccess(false);
 
     try {
-      const endpoint = formData.userType === "admin" ? "/User/adminSignup" : "/User/userSignup";
+      const endpoint =
+        formData.userType === "admin"
+          ? "/User/adminSignup"
+          : "/User/userSignup";
 
       const payload = {
         firstName: formData.firstName,
@@ -67,11 +79,14 @@ const RegisterPage = () => {
         password: formData.password,
       };
 
-      const response = await fetch(`http://localhost:21000/api/v1${endpoint}`, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      const response = await fetch(
+        `http://51.20.66.94:8080/api/v1${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -259,9 +274,7 @@ const RegisterPage = () => {
         {success && (
           <div style={styles.successMessage}>
             <CheckCircle size={20} />
-            <span>
-              Registration successful! Redirecting to login...
-            </span>
+            <span>Registration successful! Redirecting to login...</span>
           </div>
         )}
 
@@ -315,8 +328,6 @@ const RegisterPage = () => {
             )}
           </div>
 
-
-
           {/* Email */}
           <div style={styles.inputGroup}>
             <label style={styles.label}>
@@ -340,8 +351,6 @@ const RegisterPage = () => {
               </div>
             )}
           </div>
-
-
 
           {/* College Name */}
           <div style={styles.inputGroup}>
@@ -432,4 +441,3 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
-

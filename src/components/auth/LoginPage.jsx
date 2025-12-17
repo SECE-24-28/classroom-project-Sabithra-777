@@ -12,7 +12,7 @@ const LoginPage = () => {
     userType: "user", // "user" or "admin"
   });
   const [showRequestForm, setShowRequestForm] = useState(false);
-  const [requestData, setRequestData] = useState({ email: '', message: '' });
+  const [requestData, setRequestData] = useState({ email: "", message: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -49,18 +49,22 @@ const LoginPage = () => {
     setErrors({});
 
     try {
-      const endpoint = formData.userType === "admin" ? "/User/adminLogin" : "/User/userLogin";
+      const endpoint =
+        formData.userType === "admin" ? "/User/adminLogin" : "/User/userLogin";
 
       const payload = {
         email: formData.email,
         password: formData.password,
       };
 
-      const response = await fetch(`http://localhost:21000/api/v1${endpoint}`, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      const response = await fetch(
+        `http://51.20.66.94:8080/api/v1${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -77,10 +81,11 @@ const LoginPage = () => {
         setErrors({ submit: data.message || "Login failed" });
       }
     } catch (error) {
-      const errorMsg = error.message || "Login failed. Please check your credentials.";
+      const errorMsg =
+        error.message || "Login failed. Please check your credentials.";
       if (errorMsg.includes("not activated")) {
         setShowRequestForm(true);
-        setRequestData({ email: formData.email, message: '' });
+        setRequestData({ email: formData.email, message: "" });
       }
       setErrors({
         submit: errorMsg,
@@ -405,10 +410,15 @@ const LoginPage = () => {
           <div style={styles.requestModal}>
             <div style={styles.requestCard}>
               <h3>Request Account Activation</h3>
-              <p>Your account is pending admin approval. Send a request to activate your account.</p>
+              <p>
+                Your account is pending admin approval. Send a request to
+                activate your account.
+              </p>
               <textarea
                 value={requestData.message}
-                onChange={(e) => setRequestData({...requestData, message: e.target.value})}
+                onChange={(e) =>
+                  setRequestData({ ...requestData, message: e.target.value })
+                }
                 placeholder="Please explain why you need access..."
                 style={styles.requestTextarea}
               />
@@ -416,21 +426,24 @@ const LoginPage = () => {
                 <button
                   onClick={async () => {
                     try {
-                      const response = await fetch('http://localhost:21000/api/v1/User/createRequest', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          email: requestData.email,
-                          requestType: 'Account Activation',
-                          message: requestData.message
-                        })
-                      });
+                      const response = await fetch(
+                        "http://51.20.66.94:8080/api/v1/User/createRequest",
+                        {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            email: requestData.email,
+                            requestType: "Account Activation",
+                            message: requestData.message,
+                          }),
+                        }
+                      );
                       if (response.ok) {
-                        alert('Request sent successfully!');
+                        alert("Request sent successfully!");
                         setShowRequestForm(false);
                       }
                     } catch (error) {
-                      alert('Failed to send request');
+                      alert("Failed to send request");
                     }
                   }}
                   style={styles.sendButton}
@@ -453,4 +466,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
