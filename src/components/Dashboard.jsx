@@ -18,7 +18,9 @@ const Dashboard = () => {
   const { user, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
   
-  const [activeTab, setActiveTab] = useState('welcome');
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('activeTab') || 'welcome';
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const styles = {
@@ -64,16 +66,16 @@ const Dashboard = () => {
       position: 'fixed',
       top: '80px',
       left: '2rem',
-      background: 'rgba(102, 126, 234, 0.1)',
-      color: '#667eea',
+      background: 'rgba(102, 126, 234, 0.2)',
+      color: '#1a202c',
       padding: '0.5rem 1rem',
       borderRadius: '20px',
-      fontSize: '0.85rem',
-      fontWeight: '600',
+      fontSize: '0.95rem',
+      fontWeight: '700',
       zIndex: 100,
       backdropFilter: 'blur(10px)',
-      border: '1px solid rgba(102, 126, 234, 0.2)',
-      boxShadow: '0 4px 15px rgba(102, 126, 234, 0.1)',
+      border: '1px solid rgba(102, 126, 234, 0.3)',
+      boxShadow: '0 4px 15px rgba(102, 126, 234, 0.15)',
     },
   };
 
@@ -98,13 +100,27 @@ const Dashboard = () => {
     // Redirect to correct dashboard based on role
     const currentPath = window.location.pathname;
     if (isAdmin && currentPath === '/user/dashboard') {
+      localStorage.setItem('activeTab', 'welcome');
+      setActiveTab('welcome');
       navigate('/admin/dashboard', { replace: true });
       return;
     }
     if (!isAdmin && currentPath === '/admin/dashboard') {
+      localStorage.setItem('activeTab', 'welcome');
+      setActiveTab('welcome');
       navigate('/user/dashboard', { replace: true });
       return;
     }
+    
+    // Validate activeTab for user role
+    const adminOnlyTabs = ['create-assignment', 'user-requests', 'manage-users', 'assignment-results', 'grade-submissions'];
+    if (!isAdmin && adminOnlyTabs.includes(activeTab)) {
+      localStorage.setItem('activeTab', 'welcome');
+      setActiveTab('welcome');
+      return;
+    }
+    
+    localStorage.setItem('activeTab', activeTab);
     
     setIsLoading(true);
     const timer = setTimeout(() => {

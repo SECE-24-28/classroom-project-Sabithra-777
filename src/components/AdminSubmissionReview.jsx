@@ -16,25 +16,12 @@ const AdminSubmissionReview = () => {
 
   const fetchAdminAssignments = async () => {
     try {
-<<<<<<< HEAD
       const response = await fetch(`http://localhost:21000/api/v1/Admin/getAssignments/${user.id}`);
       const data = await response.json();
       
       if (data.success) {
         setAssignments(data.data || []);
       }
-=======
-      const response = await fetch(
-        `http://51.20.66.94:8080/api/v1/Admin/getAllRequests/${user.id}`
-      );
-      const data = await response.json();
-
-      // Mock assignments for now since we need to get admin's created assignments
-      setAssignments([
-        { _id: "1", assignmentName: "Math Assignment 1" },
-        { _id: "2", assignmentName: "Science Project" },
-      ]);
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
     } catch (error) {
       console.error("Error fetching assignments:", error);
     }
@@ -44,7 +31,7 @@ const AdminSubmissionReview = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://51.20.66.94:8080/api/v1/Admin/fetchResult",
+        "http://localhost:21000/api/v1/Admin/fetchResult",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -73,7 +60,7 @@ const AdminSubmissionReview = () => {
 
     try {
       const response = await fetch(
-        "http://51.20.66.94:8080/api/v1/Admin/gradeSubmission",
+        "http://localhost:21000/api/v1/Admin/gradeSubmission",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -87,7 +74,6 @@ const AdminSubmissionReview = () => {
 
       const data = await response.json();
       if (data.success) {
-<<<<<<< HEAD
         alert('Submission graded successfully!');
         if (selectedAssignment) {
           fetchSubmissions(selectedAssignment);
@@ -95,11 +81,6 @@ const AdminSubmissionReview = () => {
         setGrading(prev => ({ ...prev, [submissionId]: {} }));
       } else {
         alert(data.message || 'Failed to grade submission');
-=======
-        alert("Submission graded successfully!");
-        fetchSubmissions(selectedAssignment);
-        setGrading((prev) => ({ ...prev, [submissionId]: {} }));
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       }
     } catch (error) {
       alert("Failed to grade submission");
@@ -210,16 +191,11 @@ const AdminSubmissionReview = () => {
           <div style={styles.userInfo}>
             <User size={20} />
             <div>
-<<<<<<< HEAD
               <h4 style={{ margin: '0 0 0.25rem 0' }}>{submission.user?.firstName || 'Student'}</h4>
               <p style={{ margin: 0, color: '#718096', fontSize: '0.875rem' }}>
                 {submission.user?.email || 'No email'}
               </p>
               <p style={{ margin: '0.25rem 0 0 0', color: '#718096', fontSize: '0.875rem' }}>
-=======
-              <h4>{submission.user?.firstName}</h4>
-              <p style={{ margin: 0, color: "#718096", fontSize: "0.875rem" }}>
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
                 Submitted: {new Date(submission.submittedAt).toLocaleString()}
               </p>
             </div>

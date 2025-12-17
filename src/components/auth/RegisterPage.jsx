@@ -1,20 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-<<<<<<< HEAD
 import { UserPlus, Mail, Phone, Building, Lock, User, AlertCircle, CheckCircle } from "lucide-react";
 import { toast } from "react-toastify";
-=======
-import {
-  UserPlus,
-  Mail,
-  Phone,
-  Building,
-  Lock,
-  User,
-  AlertCircle,
-  CheckCircle,
-} from "lucide-react";
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -85,7 +72,7 @@ const RegisterPage = () => {
       };
 
       const response = await fetch(
-        `http://51.20.66.94:8080/api/v1${endpoint}`,
+        `http://localhost:21000/api/v1${endpoint}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

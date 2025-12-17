@@ -117,7 +117,7 @@ export default function UserAssignmentDashboard() {
     title: {
       fontSize: "2.5rem",
       fontWeight: "bold",
-      color: "white",
+      color: "#1e3a8a",
       marginBottom: "0.5rem",
       textShadow: "2px 2px 4px rgba(0,0,0,0.2)",
     },

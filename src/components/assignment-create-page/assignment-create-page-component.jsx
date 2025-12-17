@@ -48,7 +48,7 @@ const CreateAssignmentPage = () => {
 
     try {
       const response = await fetch(
-        "http://51.20.66.94:8080/api/v1/Admin/createAssignment",
+        "http://localhost:21000/api/v1/Admin/createAssignment",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

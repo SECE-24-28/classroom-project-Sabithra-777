@@ -36,26 +36,11 @@ const UserRequestsPage = () => {
 
     setLoading(true); //
     try {
-<<<<<<< HEAD
       const response = await fetch(`http://localhost:21000/api/v1/Admin/pendingUsers/${adminId}`);
       const data = await response.json();
 
       if (data.success) {
         setRequests(data.data || []);
-=======
-      const response = await fetch(
-        `http://51.20.66.94:8080/api/v1/Admin/getAllRequests/${adminId}`
-      );
-      const data = await response.json();
-
-      if (data.success) {
-        // Combine registration requests and user requests
-        const allRequests = [
-          ...(data.data.registrationRequests || []),
-          ...(data.data.userRequests || []),
-        ];
-        setRequests(allRequests);
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       } else {
         console.error("Failed to fetch requests");
       }
@@ -73,7 +58,6 @@ const UserRequestsPage = () => {
     setActionLoading((prev) => ({ ...prev, [userId]: action }));
 
     try {
-<<<<<<< HEAD
       const response = await fetch('http://localhost:21000/api/v1/Admin/approveUser', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -84,21 +68,6 @@ const UserRequestsPage = () => {
         })
       });
       
-=======
-      const response = await fetch(
-        "http://51.20.66.94:8080/api/v1/Admin/acceptOrDecline",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            adminId,
-            userId,
-            select: action === "accept" ? 1 : 0,
-          }),
-        }
-      );
-
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       const data = await response.json();
 
       if (data.success) {

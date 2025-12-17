@@ -1,13 +1,7 @@
-<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Upload, FileText, Calendar, Clock, CheckCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
-=======
-import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { Upload, FileText, Calendar, Clock } from "lucide-react";
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
 
 const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
   const { user } = useAuth();
@@ -19,27 +13,18 @@ const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
-<<<<<<< HEAD
       toast.warning('Please select a PDF file');
-=======
-      alert("Please select a PDF file");
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
     }
   };
 
   const submitAssignment = async () => {
     if (!selectedFile) {
-<<<<<<< HEAD
       toast.warning('Please select a PDF file to submit');
-=======
-      alert("Please select a PDF file to submit");
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       return;
     }
 
     setSubmitting(true);
     try {
-<<<<<<< HEAD
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:21000/api/v1/User/submitTest', {
         method: 'POST',
@@ -63,30 +48,6 @@ const AssignmentSubmissionForm = ({ assignmentId, onSubmit }) => {
       }
     } catch (error) {
       toast.error('Submission failed');
-=======
-      const response = await fetch(
-        "http://51.20.66.94:8080/api/v1/User/submitTest",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: user.id,
-            assignmentId,
-          }),
-        }
-      );
-
-      const data = await response.json();
-      if (data.success) {
-        alert("Assignment submitted successfully!");
-        setSelectedFile(null);
-        onSubmit();
-      } else {
-        alert(data.message || "Submission failed");
-      }
-    } catch (error) {
-      alert("Submission failed");
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
     } finally {
       setSubmitting(false);
     }
@@ -197,7 +158,6 @@ const AssignmentSubmission = () => {
 
   const fetchAssignments = async () => {
     try {
-<<<<<<< HEAD
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:21000/api/v1/User/allAssignments', {
         method: 'POST',
@@ -207,16 +167,6 @@ const AssignmentSubmission = () => {
         },
         body: JSON.stringify({ userId: user.id })
       });
-=======
-      const response = await fetch(
-        "http://51.20.66.94:8080/api/v1/User/allAssignments",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id }),
-        }
-      );
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       const data = await response.json();
       if (data.success) {
         setAssignments(data.assignmentList || []);
@@ -243,7 +193,8 @@ const AssignmentSubmission = () => {
       if (data.success) {
         const submissionMap = {};
         data.submissions.forEach(sub => {
-          submissionMap[sub.assignment] = sub;
+          const assignmentId = sub.assignment?._id || sub.assignment;
+          submissionMap[assignmentId] = sub;
         });
         setSubmissions(submissionMap);
       }
@@ -255,42 +206,39 @@ const AssignmentSubmission = () => {
   const styles = {
     container: {
       padding: "2rem",
-      maxWidth: "1000px",
+      maxWidth: "1100px",
       margin: "0 auto",
     },
     title: {
-      fontSize: "2rem",
-      fontWeight: "700",
-      color: "#1a202c",
-      marginBottom: "2rem",
+      fontSize: "2.5rem",
+      fontWeight: "800",
+      color: "white",
+      marginBottom: "2.5rem",
       textAlign: "center",
+      textShadow: "0 4px 10px rgba(0,0,0,0.2)",
     },
     assignmentCard: {
-      background: "white",
-      borderRadius: "12px",
-      padding: "1.5rem",
+      background: "rgba(255, 255, 255, 0.95)",
+      backdropFilter: "blur(20px)",
+      borderRadius: "20px",
+      padding: "2rem",
       marginBottom: "1.5rem",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-      border: "1px solid #e2e8f0",
+      boxShadow: "0 10px 40px rgba(0,0,0,0.15)",
+      border: "1px solid rgba(255, 255, 255, 0.3)",
+      transition: "all 0.3s ease",
     },
     assignmentHeader: {
-<<<<<<< HEAD
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
       marginBottom: '1rem',
       gap: '1rem',
-=======
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: "1rem",
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
     },
     assignmentTitle: {
-      fontSize: "1.25rem",
-      fontWeight: "600",
+      fontSize: "1.4rem",
+      fontWeight: "700",
       color: "#1a202c",
+      marginBottom: "0.5rem",
     },
     deadline: {
       display: "flex",
@@ -309,8 +257,12 @@ const AssignmentSubmission = () => {
     },
     noAssignments: {
       textAlign: "center",
-      padding: "3rem",
-      color: "#718096",
+      padding: "4rem 2rem",
+      background: "rgba(255, 255, 255, 0.95)",
+      backdropFilter: "blur(20px)",
+      borderRadius: "20px",
+      color: "#64748b",
+      boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
     },
   };
 
@@ -328,7 +280,6 @@ const AssignmentSubmission = () => {
           <p>No assignments available</p>
         </div>
       ) : (
-<<<<<<< HEAD
         assignments.map((assignment) => {
           const isSubmitted = !!submissions[assignment._id];
           return (
@@ -342,17 +293,6 @@ const AssignmentSubmission = () => {
                   </div>
                 </div>
                 {!isSubmitted && <CountdownTimer deadline={assignment.deadline} />}
-=======
-        assignments.map((assignment) => (
-          <div key={assignment._id} style={styles.assignmentCard}>
-            <div style={styles.assignmentHeader}>
-              <h3 style={styles.assignmentTitle}>
-                {assignment.assignmentName}
-              </h3>
-              <div style={styles.deadline}>
-                <Calendar size={16} />
-                Due: {new Date(assignment.deadline).toLocaleDateString()}
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
               </div>
               
               {isSubmitted ? (
@@ -380,22 +320,8 @@ const AssignmentSubmission = () => {
                 />
               )}
             </div>
-<<<<<<< HEAD
           );
         })
-=======
-
-            {assignment.submitted ? (
-              <div style={styles.submittedBadge}>✓ Submitted</div>
-            ) : (
-              <AssignmentSubmissionForm
-                assignmentId={assignment._id}
-                onSubmit={() => fetchAssignments()}
-              />
-            )}
-          </div>
-        ))
->>>>>>> 72551af780a75b3aadcfc9f94ccf9a7f0a161241
       )}
     </div>
   );
