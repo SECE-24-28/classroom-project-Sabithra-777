@@ -9,7 +9,7 @@ database.connect(); //
 app.use(
   cors({
     origin: [
-      "http://51.20.66.94:5173", // Your EC2 frontend
+      "http://13.60.70.224:5173", // Your EC2 frontend
       "http://localhost:5173", // Local development
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
