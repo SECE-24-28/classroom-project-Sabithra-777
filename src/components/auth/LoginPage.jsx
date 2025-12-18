@@ -16,6 +16,13 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // ✅ ADDED THESE MISSING STATE VARIABLES
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestData, setRequestData] = useState({
+    email: "",
+    message: "",
+  });
+
   const validate = () => {
     const newErrors = {};
 
@@ -68,13 +75,17 @@ const LoginPage = () => {
 
       if (data.success) {
         login(data.data);
-        localStorage.setItem('token', data.data.token);
-        localStorage.setItem('activeTab', 'welcome');
-        const dashboardPath = data.data.role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("activeTab", "welcome");
+        const dashboardPath =
+          data.data.role === "admin" ? "/admin/dashboard" : "/user/dashboard";
         navigate(dashboardPath);
       } else {
         if (data.message === "Waiting for admin approval") {
           toast.warning("Waiting for admin approval");
+          // ✅ Show the request form and set email
+          setRequestData({ email: formData.email, message: "" });
+          setShowRequestForm(true);
         }
         setErrors({ submit: data.message || "Login failed" });
       }
@@ -240,6 +251,66 @@ const LoginPage = () => {
       fontWeight: "600",
       textDecoration: "none",
     },
+    // ✅ ADDED MISSING STYLES FOR REQUEST MODAL
+    requestModal: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.5)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 1000,
+    },
+    requestCard: {
+      background: "white",
+      borderRadius: "16px",
+      padding: "2rem",
+      maxWidth: "500px",
+      width: "90%",
+      boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+    },
+    requestTextarea: {
+      width: "100%",
+      minHeight: "100px",
+      padding: "1rem",
+      border: "2px solid #e2e8f0",
+      borderRadius: "12px",
+      fontSize: "1rem",
+      marginTop: "1rem",
+      marginBottom: "1rem",
+      boxSizing: "border-box",
+      fontFamily: "inherit",
+      resize: "vertical",
+    },
+    requestButtons: {
+      display: "flex",
+      gap: "1rem",
+    },
+    sendButton: {
+      flex: 1,
+      padding: "0.875rem",
+      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      color: "white",
+      border: "none",
+      borderRadius: "12px",
+      fontSize: "1rem",
+      fontWeight: "600",
+      cursor: "pointer",
+    },
+    cancelButton: {
+      flex: 1,
+      padding: "0.875rem",
+      background: "#f7fafc",
+      color: "#718096",
+      border: "none",
+      borderRadius: "12px",
+      fontSize: "1rem",
+      fontWeight: "600",
+      cursor: "pointer",
+    },
   };
 
   return (
@@ -381,11 +452,11 @@ const LoginPage = () => {
                         }
                       );
                       if (response.ok) {
-                        alert("Request sent successfully!");
+                        toast.success("Request sent successfully!");
                         setShowRequestForm(false);
                       }
                     } catch (error) {
-                      alert("Failed to send request");
+                      toast.error("Failed to send request");
                     }
                   }}
                   style={styles.sendButton}
