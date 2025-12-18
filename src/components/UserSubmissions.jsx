@@ -1,30 +1,38 @@
 import { useState, useEffect } from 'react';
-import { userAPI } from '../config/api';
+import { useAuth } from '../context/AuthContext';
+import { FileText, Clock, CheckCircle, Award, Calendar } from 'lucide-react';
 
 const UserSubmissions = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (user.id) {
-      fetchSubmissions();
-    }
-  }, [user.id]);
+    fetchSubmissions();
+  }, []);
 
   const fetchSubmissions = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const response = await userAPI.getUserSubmissions(user.id);
-      if (response.data.success) {
-        setSubmissions(response.data.data || []);
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:21000/api/v1/User/submissions', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId: user.id })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setSubmissions(data.submissions || []);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Error fetching submissions');
+      setError('Error fetching submissions');
     } finally {
       setLoading(false);
     }
@@ -33,42 +41,50 @@ const UserSubmissions = () => {
   const styles = {
     container: {
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       padding: '2rem',
       fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     },
     header: {
       textAlign: 'center',
-      marginBottom: '2rem',
-      color: 'white',
+      marginBottom: '2.5rem',
+      color: '#1e3a8a',
     },
     title: {
-      fontSize: '2.5rem',
-      fontWeight: 'bold',
-      marginBottom: '0.5rem',
+      fontSize: '2.8rem',
+      fontWeight: '800',
+      marginBottom: '0.75rem',
+      color: '#1e3a8a',
+      textShadow: '0 4px 10px rgba(30,58,138,0.2)',
     },
     card: {
-      background: 'white',
-      borderRadius: '16px',
-      padding: '1.5rem',
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(20px)',
+      borderRadius: '20px',
+      padding: '2rem',
       marginBottom: '1rem',
-      boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+      boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
     },
     submissionItem: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      padding: '1rem',
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
+      padding: '1.5rem',
+      background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+      border: '1px solid rgba(30, 58, 138, 0.5)',
+      borderRadius: '16px',
       marginBottom: '1rem',
+      transition: 'all 0.3s ease',
+      color: 'white',
     },
     marksContainer: (hasMarks) => ({
-      padding: '0.5rem 1rem',
-      borderRadius: '20px',
-      background: hasMarks ? '#d1fae5' : '#fef3c7',
-      color: hasMarks ? '#065f46' : '#92400e',
-      fontWeight: 'bold',
+      padding: '0.75rem 1.5rem',
+      borderRadius: '30px',
+      background: hasMarks ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+      color: 'white',
+      fontWeight: '700',
+      boxShadow: hasMarks ? '0 4px 15px rgba(16, 185, 129, 0.3)' : '0 4px 15px rgba(251, 191, 36, 0.3)',
+      textShadow: '0 1px 2px rgba(0,0,0,0.2)',
     }),
   };
 
@@ -111,14 +127,22 @@ const UserSubmissions = () => {
             {submissions.map((submission) => (
               <div key={submission._id} style={styles.submissionItem}>
                 <div>
-                  <h4 style={{ margin: '0 0 0.5rem 0', color: '#1f2937' }}>
+                  <h4 style={{ margin: '0 0 0.5rem 0', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <FileText size={20} color="white" />
                     {submission.assignment?.assignmentName || 'Assignment'}
                   </h4>
-                  <p style={{ margin: 0, color: '#6b7280', fontSize: '0.9rem' }}>
-                    Submitted: {new Date(submission.completedTime).toLocaleDateString()}
+                  <p style={{ margin: '0 0 0.25rem 0', color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Clock size={14} />
+                    Submitted: {submission.submittedAt ? new Date(submission.submittedAt).toLocaleDateString() : 'N/A'}
                   </p>
+                  {submission.assignment?.deadline && (
+                    <p style={{ margin: '0 0 0.25rem 0', color: 'rgba(255,255,255,0.9)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Calendar size={14} />
+                      Deadline: {new Date(submission.assignment.deadline).toLocaleDateString()}
+                    </p>
+                  )}
                   {submission.feedback && (
-                    <p style={{ margin: '0.5rem 0 0 0', color: '#4b5563', fontSize: '0.9rem' }}>
+                    <p style={{ margin: '0.5rem 0 0 0', color: 'rgba(255,255,255,0.95)', fontSize: '0.9rem' }}>
                       <strong>Feedback:</strong> {submission.feedback}
                     </p>
                   )}
@@ -126,9 +150,15 @@ const UserSubmissions = () => {
                 
                 <div style={styles.marksContainer(submission.marks !== null)}>
                   {submission.marks !== null ? (
-                    `${submission.marks} marks`
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Award size={18} />
+                      {submission.marks} marks
+                    </div>
                   ) : (
-                    'Pending'
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Clock size={18} />
+                      Waiting for grading
+                    </div>
                   )}
                 </div>
               </div>

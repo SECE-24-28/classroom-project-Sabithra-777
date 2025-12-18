@@ -8,7 +8,7 @@ import {
   Users,
   Sparkles,
 } from "lucide-react";
-import { adminAPI } from '../../config/api';
+import { adminAPI } from "../../config/api";
 
 const CreateAssignmentPage = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +19,7 @@ const CreateAssignmentPage = () => {
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const admin = JSON.parse(localStorage.getItem('user') || '{}');
+  const admin = JSON.parse(localStorage.getItem("user") || "{}");
   const adminId = admin.id;
   const today = new Date().toISOString().split("T")[0];
 
@@ -40,23 +40,26 @@ const CreateAssignmentPage = () => {
   const handleSubmit = async () => {
     if (!validate()) return;
     if (!adminId) {
-      alert('Admin not logged in');
+      alert("Admin not logged in");
       return;
     }
-    
+
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:21000/api/v1/Admin/createAssignment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          assignmentName: formData.assignmentName,
-          deadline: formData.deadline,
-          adminId,
-        })
-      });
-      
+      const response = await fetch(
+        "http://13.60.70.224:8080/api/v1/Admin/createAssignment",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            assignmentName: formData.assignmentName,
+            deadline: formData.deadline,
+            adminId,
+          }),
+        }
+      );
+
       const data = await response.json();
 
       if (data.success) {

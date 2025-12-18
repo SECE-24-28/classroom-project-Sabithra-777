@@ -1,22 +1,48 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BookOpen, Users, Award, Clock } from 'lucide-react';
 
 const WelcomeDashboard = () => {
   const { user, isAdmin } = useAuth();
+  const [stats, setStats] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const userStats = [
-    { icon: <BookOpen size={24} />, label: 'Active Assignments', value: '3', color: '#3b82f6' },
-    { icon: <Clock size={24} />, label: 'Pending Submissions', value: '1', color: '#f59e0b' },
-    { icon: <Award size={24} />, label: 'Completed', value: '12', color: '#10b981' },
-  ];
+  useEffect(() => {
+    if (isAdmin) {
+      fetchAdminStats();
+    } else {
+      fetchUserStats();
+    }
+  }, [isAdmin]);
 
-  const adminStats = [
-    { icon: <Users size={24} />, label: 'Total Students', value: '45', color: '#3b82f6' },
-    { icon: <BookOpen size={24} />, label: 'Active Assignments', value: '8', color: '#f59e0b' },
-    { icon: <Award size={24} />, label: 'Pending Requests', value: '3', color: '#ef4444' },
-  ];
+  const fetchAdminStats = async () => {
+    try {
+      const response = await fetch(`http://localhost:21000/api/v1/Admin/stats/${user.id}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setStats([
+          { icon: <Users size={24} />, label: 'Total Students', value: data.data.totalStudents, color: '#3b82f6' },
+          { icon: <BookOpen size={24} />, label: 'Total Assignments', value: data.data.totalAssignments, color: '#f59e0b' },
+          { icon: <Clock size={24} />, label: 'Pending Approvals', value: data.data.pendingApprovals, color: '#ef4444' },
+          { icon: <Award size={24} />, label: 'Total Submissions', value: data.data.totalSubmissions, color: '#10b981' },
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching admin stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const stats = isAdmin ? adminStats : userStats;
+  const fetchUserStats = async () => {
+    setStats([
+      { icon: <BookOpen size={24} />, label: 'Active Assignments', value: '0', color: '#3b82f6' },
+      { icon: <Clock size={24} />, label: 'Pending Submissions', value: '0', color: '#f59e0b' },
+      { icon: <Award size={24} />, label: 'Completed', value: '0', color: '#10b981' },
+    ]);
+    setLoading(false);
+  };
 
   const styles = {
     container: {
@@ -25,32 +51,40 @@ const WelcomeDashboard = () => {
       margin: '0 auto',
     },
     welcomeCard: {
-      background: 'white',
-      borderRadius: '16px',
-      padding: '2rem',
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(20px)',
+      borderRadius: '24px',
+      padding: '3rem 2rem',
       marginBottom: '2rem',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+      boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
       textAlign: 'center',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
     },
     welcomeTitle: {
-      fontSize: '2rem',
-      fontWeight: '700',
-      color: '#1a202c',
-      marginBottom: '0.5rem',
+      fontSize: '2.5rem',
+      fontWeight: '800',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text',
+      marginBottom: '1rem',
     },
     welcomeSubtitle: {
-      fontSize: '1.1rem',
-      color: '#718096',
+      fontSize: '1.15rem',
+      color: '#4a5568',
       marginBottom: '1.5rem',
+      lineHeight: '1.6',
     },
     roleTag: {
       display: 'inline-block',
-      padding: '0.5rem 1rem',
-      background: isAdmin ? '#fef3c7' : '#dbeafe',
-      color: isAdmin ? '#92400e' : '#1e40af',
-      borderRadius: '20px',
-      fontSize: '0.875rem',
-      fontWeight: '600',
+      padding: '0.75rem 1.5rem',
+      background: isAdmin ? 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+      color: 'white',
+      borderRadius: '30px',
+      fontSize: '0.9rem',
+      fontWeight: '700',
+      boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+      textShadow: '0 1px 2px rgba(0,0,0,0.2)',
     },
     statsGrid: {
       display: 'grid',
@@ -59,36 +93,42 @@ const WelcomeDashboard = () => {
       marginBottom: '2rem',
     },
     statCard: {
-      background: 'white',
-      borderRadius: '12px',
-      padding: '1.5rem',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(20px)',
+      borderRadius: '20px',
+      padding: '2rem',
+      boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
       display: 'flex',
       alignItems: 'center',
-      gap: '1rem',
+      gap: '1.5rem',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
+      transition: 'all 0.3s ease',
+      cursor: 'pointer',
     },
     statIcon: (color) => ({
-      width: '50px',
-      height: '50px',
-      borderRadius: '12px',
-      background: color,
+      width: '70px',
+      height: '70px',
+      borderRadius: '18px',
+      background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)`,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       color: 'white',
+      boxShadow: `0 8px 20px ${color}40`,
     }),
     statContent: {
       flex: 1,
     },
     statValue: {
-      fontSize: '1.5rem',
-      fontWeight: '700',
+      fontSize: '2rem',
+      fontWeight: '800',
       color: '#1a202c',
       marginBottom: '0.25rem',
     },
     statLabel: {
-      fontSize: '0.875rem',
-      color: '#718096',
+      fontSize: '0.95rem',
+      color: '#64748b',
+      fontWeight: '500',
     },
     quickActions: {
       background: 'white',
@@ -124,19 +164,9 @@ const WelcomeDashboard = () => {
     },
   };
 
-  const userActions = [
-    { icon: '📚', title: 'View Assignments', description: 'Check your current assignments' },
-    { icon: '📝', title: 'Submit Work', description: 'Submit completed assignments' },
-    { icon: '📊', title: 'Check Grades', description: 'View your performance' },
-  ];
-
-  const adminActions = [
-    { icon: '➕', title: 'Create Assignment', description: 'Add new assignments' },
-    { icon: '👥', title: 'Manage Users', description: 'Handle user requests' },
-    { icon: '✅', title: 'Grade Work', description: 'Review submissions' },
-  ];
-
-  const actions = isAdmin ? adminActions : userActions;
+  if (loading) {
+    return <div style={styles.container}>Loading...</div>;
+  }
 
   return (
     <div style={styles.container}>
@@ -169,31 +199,7 @@ const WelcomeDashboard = () => {
         ))}
       </div>
 
-      <div style={styles.quickActions}>
-        <h2 style={styles.sectionTitle}>Quick Actions</h2>
-        <div style={styles.actionGrid}>
-          {actions.map((action, index) => (
-            <div 
-              key={index} 
-              style={styles.actionButton}
-              onMouseEnter={(e) => {
-                e.target.style.borderColor = '#667eea';
-                e.target.style.background = '#f0f4ff';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.borderColor = '#e2e8f0';
-                e.target.style.background = '#f8fafc';
-              }}
-            >
-              <div style={{ fontSize: '2rem' }}>{action.icon}</div>
-              <div style={styles.actionTitle}>{action.title}</div>
-              <div style={{ fontSize: '0.75rem', color: '#718096', marginTop: '0.25rem' }}>
-                {action.description}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+
     </div>
   );
 };

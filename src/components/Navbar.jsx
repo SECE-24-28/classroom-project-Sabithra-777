@@ -7,6 +7,7 @@ const Navbar = ({ activeTab, setActiveTab }) => {
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem('token');
     navigate('/');
   };
 
@@ -14,15 +15,14 @@ const Navbar = ({ activeTab, setActiveTab }) => {
     { id: 'welcome', label: 'Dashboard', icon: '🏠' },
     { id: 'assignments', label: 'My Assignments', icon: '📚' },
     { id: 'my-submissions', label: 'My Grades', icon: '📊' },
-    { id: 'send-request', label: 'Send Request', icon: '📝' },
   ];
 
   const adminNavItems = [
     { id: 'welcome', label: 'Dashboard', icon: '🏠' },
     { id: 'create-assignment', label: 'Create Assignment', icon: '➕' },
     { id: 'user-requests', label: 'User Requests', icon: '👥' },
+    { id: 'manage-users', label: 'Manage Users', icon: '👥' },
     { id: 'grade-submissions', label: 'Grade Submissions', icon: '✅' },
-    { id: 'assignment-results', label: 'All Results', icon: '📊' },
   ];
 
   const navItems = isAdmin ? adminNavItems : userNavItems;

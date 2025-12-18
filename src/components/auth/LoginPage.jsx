@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { LogIn, Mail, Lock, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -11,11 +12,16 @@ const LoginPage = () => {
     password: "",
     userType: "user", // "user" or "admin"
   });
-  const [showRequestForm, setShowRequestForm] = useState(false);
-  const [requestData, setRequestData] = useState({ email: '', message: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // ✅ ADDED THESE MISSING STATE VARIABLES
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestData, setRequestData] = useState({
+    email: "",
+    message: "",
+  });
 
   const validate = () => {
     const newErrors = {};
@@ -49,41 +55,43 @@ const LoginPage = () => {
     setErrors({});
 
     try {
-      const endpoint = formData.userType === "admin" ? "/User/adminLogin" : "/User/userLogin";
+      const endpoint =
+        formData.userType === "admin" ? "/User/adminLogin" : "/User/userLogin";
 
       const payload = {
         email: formData.email,
         password: formData.password,
       };
 
-      const response = await fetch(`http://localhost:21000/api/v1${endpoint}`, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      const response = await fetch(
+        `http://13.60.70.224:8080/api/v1${endpoint}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
       const data = await response.json();
 
       if (data.success) {
-        // Store user data in auth context
         login(data.data);
-
-        // Redirect based on user type
-        if (data.data.role === "admin") {
-          navigate("/dashboard");
-        } else {
-          navigate("/dashboard");
-        }
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("activeTab", "welcome");
+        const dashboardPath =
+          data.data.role === "admin" ? "/admin/dashboard" : "/user/dashboard";
+        navigate(dashboardPath);
       } else {
+        if (data.message === "Waiting for admin approval") {
+          toast.warning("Waiting for admin approval");
+          // ✅ Show the request form and set email
+          setRequestData({ email: formData.email, message: "" });
+          setShowRequestForm(true);
+        }
         setErrors({ submit: data.message || "Login failed" });
       }
     } catch (error) {
-      const errorMsg = error.message || "Login failed. Please check your credentials.";
-      if (errorMsg.includes("not activated")) {
-        setShowRequestForm(true);
-        setRequestData({ email: formData.email, message: '' });
-      }
       setErrors({
-        submit: errorMsg,
+        submit: "Login failed. Please check your credentials.",
       });
     } finally {
       setLoading(false);
@@ -243,6 +251,7 @@ const LoginPage = () => {
       fontWeight: "600",
       textDecoration: "none",
     },
+    // ✅ ADDED MISSING STYLES FOR REQUEST MODAL
     requestModal: {
       position: "fixed",
       top: 0,
@@ -257,40 +266,49 @@ const LoginPage = () => {
     },
     requestCard: {
       background: "white",
-      borderRadius: "12px",
+      borderRadius: "16px",
       padding: "2rem",
-      maxWidth: "400px",
+      maxWidth: "500px",
       width: "90%",
+      boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
     },
     requestTextarea: {
       width: "100%",
-      height: "100px",
-      padding: "0.75rem",
+      minHeight: "100px",
+      padding: "1rem",
       border: "2px solid #e2e8f0",
-      borderRadius: "8px",
+      borderRadius: "12px",
+      fontSize: "1rem",
+      marginTop: "1rem",
       marginBottom: "1rem",
+      boxSizing: "border-box",
+      fontFamily: "inherit",
       resize: "vertical",
     },
     requestButtons: {
       display: "flex",
-      gap: "0.5rem",
+      gap: "1rem",
     },
     sendButton: {
       flex: 1,
-      padding: "0.75rem",
-      background: "#667eea",
+      padding: "0.875rem",
+      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
       color: "white",
       border: "none",
-      borderRadius: "8px",
+      borderRadius: "12px",
+      fontSize: "1rem",
+      fontWeight: "600",
       cursor: "pointer",
     },
     cancelButton: {
       flex: 1,
-      padding: "0.75rem",
+      padding: "0.875rem",
       background: "#f7fafc",
       color: "#718096",
-      border: "1px solid #e2e8f0",
-      borderRadius: "8px",
+      border: "none",
+      borderRadius: "12px",
+      fontSize: "1rem",
+      fontWeight: "600",
       cursor: "pointer",
     },
   };
@@ -405,10 +423,15 @@ const LoginPage = () => {
           <div style={styles.requestModal}>
             <div style={styles.requestCard}>
               <h3>Request Account Activation</h3>
-              <p>Your account is pending admin approval. Send a request to activate your account.</p>
+              <p>
+                Your account is pending admin approval. Send a request to
+                activate your account.
+              </p>
               <textarea
                 value={requestData.message}
-                onChange={(e) => setRequestData({...requestData, message: e.target.value})}
+                onChange={(e) =>
+                  setRequestData({ ...requestData, message: e.target.value })
+                }
                 placeholder="Please explain why you need access..."
                 style={styles.requestTextarea}
               />
@@ -416,21 +439,24 @@ const LoginPage = () => {
                 <button
                   onClick={async () => {
                     try {
-                      const response = await fetch('http://localhost:21000/api/v1/User/createRequest', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          email: requestData.email,
-                          requestType: 'Account Activation',
-                          message: requestData.message
-                        })
-                      });
+                      const response = await fetch(
+                        "http://13.60.70.224:8080/api/v1/User/createRequest",
+                        {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            email: requestData.email,
+                            requestType: "Account Activation",
+                            message: requestData.message,
+                          }),
+                        }
+                      );
                       if (response.ok) {
-                        alert('Request sent successfully!');
+                        toast.success("Request sent successfully!");
                         setShowRequestForm(false);
                       }
                     } catch (error) {
-                      alert('Failed to send request');
+                      toast.error("Failed to send request");
                     }
                   }}
                   style={styles.sendButton}
@@ -453,4 +479,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
